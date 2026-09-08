@@ -136,6 +136,84 @@ class _OutdoorMapScreenState extends State<OutdoorMapScreen> {
                 borderColor: Colors.blue,
                 borderStrokeWidth: 3,
               ),
+              Polygon(
+                points: fitnessPolygon,
+                color: Colors.blue.withValues(alpha: 0.3),
+                borderColor: Colors.blue,
+                borderStrokeWidth: 3,
+              ),
+              Polygon(
+                points: vadalabenePolygon,
+                color: Colors.blue.withValues(alpha: 0.3),
+                borderColor: Colors.blue,
+                borderStrokeWidth: 3,
+              ),
+              Polygon(
+                points: religiousPolygon,
+                color: Colors.blue.withValues(alpha: 0.3),
+                borderColor: Colors.blue,
+                borderStrokeWidth: 3,
+              ),
+              Polygon(
+                points: eccPolygon,
+                color: Colors.blue.withValues(alpha: 0.3),
+                borderColor: Colors.blue,
+                borderStrokeWidth: 3,
+              ),
+              Polygon(
+                points: metcalfPolygon,
+                color: Colors.blue.withValues(alpha: 0.3),
+                borderColor: Colors.blue,
+                borderStrokeWidth: 3,
+              ),
+              Polygon(
+                points: ertcPolygon,
+                color: Colors.blue.withValues(alpha: 0.3),
+                borderColor: Colors.blue,
+                borderStrokeWidth: 3,
+              ),
+              Polygon(
+                points: technologyPolygon,
+                color: Colors.blue.withValues(alpha: 0.3),
+                borderColor: Colors.blue,
+                borderStrokeWidth: 3,
+              ),
+              Polygon(
+                points: uniParkAdminPolygon,
+                color: Colors.blue.withValues(alpha: 0.3),
+                borderColor: Colors.blue,
+                borderStrokeWidth: 3,
+              ),
+              Polygon(
+                points: uniPark195Polygon,
+                color: Colors.blue.withValues(alpha: 0.3),
+                borderColor: Colors.blue,
+                borderStrokeWidth: 3,
+              ),
+              Polygon(
+                points: uniPark200Polygon,
+                color: Colors.blue.withValues(alpha: 0.3),
+                borderColor: Colors.blue,
+                borderStrokeWidth: 3,
+              ),
+              Polygon(
+                points: uniPark220Polygon,
+                color: Colors.blue.withValues(alpha: 0.3),
+                borderColor: Colors.blue,
+                borderStrokeWidth: 3,
+              ),
+              Polygon(
+                points: biotechnologyPolygon,
+                color: Colors.blue.withValues(alpha: 0.3),
+                borderColor: Colors.blue,
+                borderStrokeWidth: 3,
+              ),
+              Polygon(
+                points: ethanolPlantPolygon,
+                color: Colors.blue.withValues(alpha: 0.3),
+                borderColor: Colors.blue,
+                borderStrokeWidth: 3,
+              ),
             ],
           ),
 
@@ -229,7 +307,98 @@ class _OutdoorMapScreenState extends State<OutdoorMapScreen> {
                 imageProvider: const AssetImage(
                   'assets/alumnihall_floor1.png'
                 ),
-                opacity: _overlayOpacity
+                opacity: _overlayOpacity,
+              ),
+              OverlayImage(
+                bounds: boundsFromPolygon(fitnessPolygon),
+                imageProvider: const AssetImage(
+                  'assets/fitness_floor1.png'
+                ),
+                opacity: _overlayOpacity,
+              ),
+              OverlayImage(
+                bounds: boundsFromPolygon(vadalabenePolygon),
+                imageProvider: const AssetImage(
+                  'assets/vadalabene_floor1.png'
+                ),
+                opacity: _overlayOpacity,
+              ),
+              OverlayImage(
+                bounds: boundsFromPolygon(religiousPolygon),
+                imageProvider: const AssetImage(
+                  'assets/religious_floor1.png'
+                ),
+                opacity: _overlayOpacity,
+              ),
+              OverlayImage(
+                bounds: boundsFromPolygon(eccPolygon),
+                imageProvider: const AssetImage(
+                  'assets/ecc_floor1.png'
+                ),
+                opacity: _overlayOpacity,
+              ),
+              OverlayImage(
+                bounds: boundsFromPolygon(metcalfPolygon),
+                imageProvider: const AssetImage(
+                  'assets/metcalf_floor1.png'
+                ),
+                opacity: _overlayOpacity,
+              ),
+              OverlayImage(
+                bounds: boundsFromPolygon(ertcPolygon),
+                imageProvider: const AssetImage(
+                  'assets/ertc_floor1.png'
+                ),
+                opacity: _overlayOpacity,
+              ),
+              OverlayImage(
+                bounds: boundsFromPolygon(technologyPolygon),
+                imageProvider: const AssetImage(
+                  'assets/technology_floor1.png'
+                ),
+                opacity: _overlayOpacity,
+              ),
+              OverlayImage(
+                bounds: boundsFromPolygon(uniParkAdminPolygon),
+                imageProvider: const AssetImage(
+                  'assets/uni_park_admin_floor1.png'
+                ),
+                opacity: _overlayOpacity,
+              ),
+              OverlayImage(
+                bounds: boundsFromPolygon(uniPark195Polygon),
+                imageProvider: const AssetImage(
+                  'assets/uni_park_195_floor1.png'
+                ),
+                opacity: _overlayOpacity,
+              ),
+              OverlayImage(
+                bounds: boundsFromPolygon(uniPark200Polygon),
+                imageProvider: const AssetImage(
+                  'assets/uni_park_200_floor1.png'
+                ),
+                opacity: _overlayOpacity,
+              ),
+              OverlayImage(
+                bounds: boundsFromPolygon(uniPark220Polygon),
+                imageProvider: const AssetImage(
+                  'assets/uni_park_220_floor1.png'
+                ),
+                opacity: _overlayOpacity,
+              ),
+              OverlayImage(
+                bounds: boundsFromPolygon(biotechnologyPolygon),
+                imageProvider: const AssetImage(
+                  'assets/biotechnology_floor1.png'
+                ),
+                opacity: _overlayOpacity,
+              ),
+              OverlayImage(
+                bounds: boundsFromPolygon(ethanolPlantPolygon),
+                imageProvider: const AssetImage(
+                  'assets/ethanol_plant_floor1.png'
+                ),
+                opacity: _overlayOpacity,
               ),
             ],
           ),
