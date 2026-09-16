@@ -1,8 +1,11 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
+import 'package:geolocator/geolocator.dart';
 import '../data/building_polygons.dart';
 import '../screenUtils/drawer.dart';
+import "../utils/geo_locator.dart";
 
 class OutdoorMapScreen extends StatefulWidget {
   const OutdoorMapScreen({super.key});
@@ -15,6 +18,39 @@ class _OutdoorMapScreenState extends State<OutdoorMapScreen> {
   double _overlayOpacity = 0.0;
   final MapController mapController = MapController();
   bool _mapReady = false;
+  bool _locationFocused = true;
+  
+  final Stream<Position> _positionStream = LocationService.getCurrentLocation();
+  StreamSubscription<Position>? _positionSubscription;
+  Position? _currentPosition;
+
+  @override
+  void initState() {
+    super.initState();
+    _positionSubscription = _positionStream.listen((Position position) {
+      if (!mounted) {
+        return;
+      }
+
+      setState(() {
+        _currentPosition = position;
+      });
+
+      if (_mapReady && _locationFocused) {
+        mapController.move(
+          LatLng(position.latitude, position.longitude),
+          mapController.camera.zoom,
+        );
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _positionSubscription?.cancel();
+    mapController.dispose();
+    super.dispose();
+  }
 
   LatLngBounds boundsFromPolygon(List<LatLng> polygon) {
     final minLat = polygon
@@ -41,91 +77,116 @@ class _OutdoorMapScreenState extends State<OutdoorMapScreen> {
         title: const Text('SIUE Campus Map'),
         actions: [
           IconButton(
+            tooltip: _locationFocused
+                ? 'Stop following location'
+                : 'Follow location',
+            icon: Icon(
+              _locationFocused
+                  ? Icons.my_location
+                  : Icons.location_searching,
+            ),
+            onPressed: () {
+              final shouldFollow = !_locationFocused;
+              setState(() {
+                _locationFocused = shouldFollow;
+              });
+
+              if (shouldFollow && _mapReady && _currentPosition != null) {
+                mapController.move(
+                  LatLng(
+                    _currentPosition!.latitude,
+                    _currentPosition!.longitude,
+                  ),
+                  mapController.camera.zoom,
+                );
+              }
+            },
+          ),
+          IconButton(
             icon: const Icon(Icons.explore),
             onPressed: () {
               if (_mapReady) {
                 mapController.rotate(0.0);
                 ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text('Map rotation reset to North.'),
-                  ),
+                  const SnackBar(content: Text('Map rotation reset to North.')),
                 );
               }
             },
           ),
-          IconButton(onPressed: () async {
-            final TextEditingController searchController = TextEditingController();
+          IconButton(
+            onPressed: () async {
+              _locationFocused = false;
+              final TextEditingController searchController =
+                  TextEditingController();
 
-            final String? buildingName = await showDialog<String>(
-              context: context,
-              builder: (BuildContext context) {
-                return AlertDialog(
-                  title: const Text('Search for a building'),
-                  content: SizedBox(
-                    width: 300,
-                    child: Autocomplete<String>(
-                      optionsBuilder: (TextEditingValue textEditingValue) {
-                        if (textEditingValue.text.isEmpty) {
-                          return const Iterable<String>.empty();
-                        }
-                        return buildingPolygons.keys.where((String option) {
-                          return option.toLowerCase().contains(
-                                textEditingValue.text.toLowerCase(),
+              final String? buildingName = await showDialog<String>(
+                context: context,
+                builder: (BuildContext context) {
+                  return AlertDialog(
+                    title: const Text('Search for a building'),
+                    content: SizedBox(
+                      width: 300,
+                      child: Autocomplete<String>(
+                        optionsBuilder: (TextEditingValue textEditingValue) {
+                          if (textEditingValue.text.isEmpty) {
+                            return const Iterable<String>.empty();
+                          }
+                          return buildingPolygons.keys.where((String option) {
+                            return option.toLowerCase().contains(
+                              textEditingValue.text.toLowerCase(),
+                            );
+                          });
+                        },
+                        fieldViewBuilder:
+                            (
+                              BuildContext context,
+                              TextEditingController fieldTextEditingController,
+                              FocusNode fieldFocusNode,
+                              VoidCallback onFieldSubmitted,
+                            ) {
+                              searchController.text =
+                                  fieldTextEditingController.text;
+                              return TextField(
+                                controller: fieldTextEditingController,
+                                focusNode: fieldFocusNode,
+                                autofocus: true,
+                                decoration: const InputDecoration(
+                                  hintText: 'Enter building name',
+                                ),
                               );
-                        });
-                      },
-                      fieldViewBuilder: (BuildContext context,
-                          TextEditingController fieldTextEditingController,
-                          FocusNode fieldFocusNode,
-                          VoidCallback onFieldSubmitted) {
-                        searchController.text = fieldTextEditingController.text;
-                        return TextField(
-                          controller: fieldTextEditingController,
-                          focusNode: fieldFocusNode,
-                          autofocus: true,
-                          decoration: const InputDecoration(
-                            hintText: 'Enter building name',
-                          ),
-                        );
-                      },
-                      onSelected: (String selection) {
-                        searchController.text = selection;
-                      },
+                            },
+                        onSelected: (String selection) {
+                          searchController.text = selection;
+                        },
+                      ),
                     ),
-                  ),
-                  actions: [
-                    TextButton(
-                      onPressed: () {
-                        Navigator.of(context).pop(searchController.text);
-                      },
-                      child: const Text('Search'),
-                    ),
-                  ],
-                );
-              },
-            );
+                    actions: [
+                      TextButton(
+                        onPressed: () {
+                          Navigator.of(context).pop(searchController.text);
+                        },
+                        child: const Text('Search'),
+                      ),
+                    ],
+                  );
+                },
+              );
 
-            if (buildingName != null && buildingName.isNotEmpty) {
-              final buildingPolygon = buildingPolygons[buildingName.toLowerCase()];
-              if (buildingPolygon != null) {
-                final bounds = boundsFromPolygon(buildingPolygon);
-                mapController.move(bounds.center, 18);
-              } else {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text('Building "$buildingName" not found.'),
-                  ),
-                );
+              if (buildingName != null && buildingName.isNotEmpty) {
+                final buildingPolygon =
+                    buildingPolygons[buildingName.toLowerCase()];
+                if (buildingPolygon != null) {
+                  final bounds = boundsFromPolygon(buildingPolygon);
+                  mapController.move(bounds.center, 18);
+                }
               }
-            }
-          }, icon: Icon(Icons.search))
+            },
+            icon: Icon(Icons.search),
+          ),
         ],
         actionsPadding: const EdgeInsets.symmetric(horizontal: 28.0),
       ),
-      drawer: MapDrawer(
-        mapController: mapController,
-        mapReady: _mapReady,
-      ),
+      drawer: MapDrawer(mapController: mapController, mapReady: _mapReady),
       body: FlutterMap(
         mapController: mapController,
         options: MapOptions(
@@ -140,6 +201,22 @@ class _OutdoorMapScreenState extends State<OutdoorMapScreen> {
 
             double newOpacity = ((zoom - 18) / (19 - 18)).clamp(0.0, 1.0);
 
+            if (hasGesture && _locationFocused && _currentPosition != null) {
+              final location = LatLng(
+                _currentPosition!.latitude,
+                _currentPosition!.longitude,
+              );
+              final distanceFromLocation = const Distance().as(
+                LengthUnit.Meter,
+                camera.center,
+                location,
+              );
+
+              if (distanceFromLocation > 20) {
+                _locationFocused = false;
+              }
+            }
+
             setState(() {
               _overlayOpacity = newOpacity;
             });
@@ -150,6 +227,7 @@ class _OutdoorMapScreenState extends State<OutdoorMapScreen> {
             urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
             userAgentPackageName: 'com.example.campus_map',
           ),
+
           PolygonLayer(
             polygons: [
               Polygon(
@@ -471,6 +549,56 @@ class _OutdoorMapScreenState extends State<OutdoorMapScreen> {
               ),
             ],
           ),
+          if (_currentPosition != null) ...[
+            CircleLayer(
+              circles: [
+                CircleMarker(
+                  point: LatLng(
+                    _currentPosition!.latitude,
+                    _currentPosition!.longitude,
+                  ),
+                  radius: _currentPosition!.accuracy,
+                  useRadiusInMeter: true,
+                  color: Colors.blue.withValues(alpha: 0.16),
+                  borderColor: Colors.blue.withValues(alpha: 0.55),
+                  borderStrokeWidth: 1.5,
+                ),
+              ],
+            ),
+            MarkerLayer(
+              markers: [
+                Marker(
+                  point: LatLng(
+                    _currentPosition!.latitude,
+                    _currentPosition!.longitude,
+                  ),
+                  width: 28,
+                  height: 28,
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      shape: BoxShape.circle,
+                      boxShadow: const [
+                        BoxShadow(
+                          color: Colors.black26,
+                          blurRadius: 4,
+                          spreadRadius: 1,
+                        ),
+                      ],
+                      border: Border.all(color: Colors.blue, width: 3),
+                    ),
+                    child: Container(
+                      margin: const EdgeInsets.all(4),
+                      decoration: const BoxDecoration(
+                        color: Colors.blue,
+                        shape: BoxShape.circle,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ],
         ],
       ),
     );
