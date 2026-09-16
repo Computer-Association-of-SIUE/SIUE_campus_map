@@ -91,29 +91,29 @@ flutter:
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/to/font-from-package
   assets:
-    - assets/engineering_floor1.png
-    - assets/peckhall_floor1.png
-    - assets/library_floor1.png
-    - assets/science_east_floor1.png
-    - assets/science_west_floor1.png
-    - assets/dunhamhall_floor1.png
-    - assets/art_design_west_floor1.png
-    - assets/art_design_east_floor1.png
-    - assets/muc_floor1.png
-    - assets/ssc_floor1.png
-    - assets/rendlemanhall_floor1.png
-    - assets/foundershall_floor1.png
-    - assets/alumnihall_floor1.png
-    - assets/fitness_floor1.png
-    - assets/vadalabene_floor1.png
-    - assets/religious_floor1.png
-    - assets/ecc_floor1.png
-    - assets/metcalf_floor1.png
-    - assets/ertc_floor1.png
-    - assets/technology_floor1.png
-    - assets/uni_park_admin_floor1.png
-    - assets/uni_park_195_floor1.png
-    - assets/uni_park_200_floor1.png
-    - assets/uni_park_220_floor1.png
-    - assets/biotechnology_floor1.png
-    - assets/ethanol_plant_floor1.png
+    - assets/images/alumni hall/
+    - assets/images/art design east/
+    - assets/images/art design west/
+    - assets/images/biotechnology/
+    - assets/images/dunham hall/
+    - assets/images/ecc/
+    - assets/images/engineering/
+    - assets/images/ertc/
+    - assets/images/ethanol plant/
+    - assets/images/fitness/
+    - assets/images/founders hall/
+    - assets/images/library/
+    - assets/images/metcalf/
+    - assets/images/muc/
+    - assets/images/peck hall/
+    - assets/images/religious/
+    - assets/images/rendleman hall/
+    - assets/images/science east/
+    - assets/images/science west/
+    - assets/images/ssc/
+    - assets/images/technology/
+    - assets/images/uni park 195/
+    - assets/images/uni park 200/
+    - assets/images/uni park 220/
+    - assets/images/uni park admin/
+    - assets/images/vadalabene/
